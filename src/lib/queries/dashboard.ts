@@ -27,6 +27,7 @@ export async function getGraphStats(): Promise<GraphStats> {
             developers,
             skills,
             technologies,
+            projects,
             count(c) AS companies
     `);
 
