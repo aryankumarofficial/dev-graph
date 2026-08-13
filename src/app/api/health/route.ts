@@ -1,23 +1,23 @@
 import {NextResponse} from "next/server";
-import {runQuery} from "@/lib/cognodb";
+import {driver} from "@/lib/cognodb";
 
-export const GET = async () => {
+export async function GET() {
     try {
+        await driver.verifyConnectivity();
 
-        const result = await runQuery<{ ok: number }>(
-            "RETURN 1 AS ok"
-        )
         return NextResponse.json({
             status: "ok",
             database: "connected",
-            result: result[0]?.ok,
         });
+    } catch (error) {
+        console.error("Health check failed:", error);
 
-    } catch (err) {
-        console.error("CongoDB Connection Failed", err);
-        return NextResponse.json({
-            status: "error",
-            database: "disconnected",
-        }, {status: 503});
+        return NextResponse.json(
+            {
+                status: "error",
+                database: "disconnected",
+            },
+            {status: 500}
+        );
     }
 }
