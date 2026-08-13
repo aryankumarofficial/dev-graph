@@ -15,7 +15,7 @@ export async function getDevelopers(): Promise<IDeveloper[]> {
     );
 }
 
-export async function getDeveloperById(developerId: IDeveloper): Promise<IDeveloper> {
+export async function getDeveloperById(developerId: string): Promise<IDeveloper> {
     const records = await runQuery<IDeveloper>(
         `
         MATCH (d:Developer {id:$developerId})
@@ -23,7 +23,7 @@ export async function getDeveloperById(developerId: IDeveloper): Promise<IDevelo
             d.id AS id,
             d.name AS name,
             d.username AS username,
-            d.bio AS bio,
+            d.bio AS bio
         `,
         {developerId}
     )
@@ -40,7 +40,7 @@ export async function getDeveloperSkills(
         RETURN
             s.id AS id,
             s.name AS name,
-            s.category AS category,
+            s.category AS category
         ORDER BY s.id
     `,
         {developerId}
@@ -51,7 +51,7 @@ export async function getDeveloperTechnologies(
     developerId: string,
 ): Promise<DeveloperTechnology[]> {
     return runQuery<DeveloperTechnology>(`
-        MATCH (d:DeveloperTechnology {id:$developerId})
+        MATCH (d:Developer {id:$developerId})
             -[:HAS_SKILL]->
             (s:Skill)
             -[:RELATED_TO]->
@@ -60,7 +60,7 @@ export async function getDeveloperTechnologies(
             t.id AS id,
             t.name AS name,
             t.category AS category,
-            t.description AS description,
+            t.description AS description
         ORDER BY s.id
     `,
         {developerId}
