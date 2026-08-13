@@ -2,15 +2,15 @@ import {DeveloperSkill, DeveloperTechnology, IDeveloper} from "@/types/developer
 import {runQuery} from "@/lib/cognodb";
 
 export async function getDevelopers(): Promise<IDeveloper[]> {
-    return runQuery<IDeveloper>(
+    return await runQuery<IDeveloper>(
         `
         MATCH (d:Developer)
         RETURN
             d.id AS id,
             d.name AS name,
             d.username AS username,
-            d.bio AS bio,
-        ORDER BY d.name
+            d.bio AS bio
+        ORDER BY d.id
         `
     );
 }
@@ -41,7 +41,7 @@ export async function getDeveloperSkills(
             s.id AS id,
             s.name AS name,
             s.category AS category,
-        ORDER BY s.name
+        ORDER BY s.id
     `,
         {developerId}
     )
@@ -61,7 +61,7 @@ export async function getDeveloperTechnologies(
             t.name AS name,
             t.category AS category,
             t.description AS description,
-        ORDER BY s.name
+        ORDER BY s.id
     `,
         {developerId}
     )
