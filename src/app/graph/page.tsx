@@ -3,10 +3,9 @@ import {notFound} from "next/navigation";
 
 import {createGraphLayout} from "@/lib/graph/transform";
 import {GraphView} from "@/components/graph-view";
-import {IDeveloper} from "@/types/developer.type";
-import {DeveloperGraph} from "@/types/graph.type";
 import {Metadata} from "next";
 import {getDeveloperById} from "@/lib/queries/developers";
+import {getDeveloperGraph} from "@/lib/queries/graph";
 
 interface PageProps {
     searchParams: Promise<{
@@ -65,16 +64,12 @@ export default async function GraphPage({
 
     const developerId = developer ?? "dev-001";
 
-    // const developerData = await getDeveloperById(developerId);
-    const devReq = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/developers/${developerId}`);
-    const {developer: dev}: { developer: IDeveloper } = await devReq.json();
+    const dev = await getDeveloperById(developerId);
     if (!dev) {
         notFound();
     }
 
-    // const graph = await getDeveloperGraph(developerId);
-    const graphReq = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/graph/${developerId}`);
-    const graph: DeveloperGraph = await graphReq.json();
+    const graph = await getDeveloperGraph(developerId);
 
     const {nodes, edges} = createGraphLayout(
         graph.nodes,

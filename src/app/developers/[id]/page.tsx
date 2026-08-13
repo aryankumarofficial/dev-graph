@@ -6,7 +6,12 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {DeveloperProject, DeveloperSkill, DeveloperTechnology} from "@/types/developer.type";
 import {Metadata} from "next";
-import {getDeveloperById} from "@/lib/queries/developers";
+import {
+    getDeveloperById,
+    getDeveloperProjects,
+    getDeveloperSkills,
+    getDeveloperTechnologies
+} from "@/lib/queries/developers";
 
 interface PageProps {
     params: Promise<{
@@ -18,7 +23,7 @@ interface PageProps {
 export async function generateMetadata({
                                            params,
                                        }: PageProps): Promise<Metadata> {
-    const { id } = await params;
+    const {id} = await params;
 
     const developer = await getDeveloperById(id);
 
@@ -57,8 +62,13 @@ export async function generateMetadata({
 
 export default async function ({params}: PageProps) {
     const {id} = await params;
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/developers/${id}`);
-    const {developer, skills, technologies, projects} = await response.json();
+    const developer = await getDeveloperById(id);
+
+    const [skills, technologies, projects] = await Promise.all([
+        getDeveloperSkills(id),
+        getDeveloperTechnologies(id),
+        getDeveloperProjects(id)
+    ])
     if (!developer) {
         notFound();
     }
@@ -222,7 +232,8 @@ export default async function ({params}: PageProps) {
                                 </p>
 
                                 <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                                    <Star className="size-4 hover:text-amber-500 hover:fill-amber-600 transition-colors duration-500"/>
+                                    <Star
+                                        className="size-4 hover:text-amber-500 hover:fill-amber-600 transition-colors duration-500"/>
                                     {project.stars}
                                 </div>
                             </CardContent>
