@@ -1,4 +1,4 @@
-import {DeveloperSkill, DeveloperTechnology, IDeveloper} from "@/types/developer.type";
+import {DeveloperProject, DeveloperSkill, DeveloperTechnology, IDeveloper} from "@/types/developer.type";
 import {runQuery} from "@/lib/cognodb";
 
 export async function getDevelopers(): Promise<IDeveloper[]> {
@@ -65,4 +65,27 @@ export async function getDeveloperTechnologies(
     `,
         {developerId}
     )
+}
+
+export async function getDeveloperProjects(
+    developerId: string
+): Promise<DeveloperProject[]> {
+    return await runQuery<DeveloperProject>(
+        `
+        MATCH (d:Developer {id: $developerId})
+              -[:BUILT]->
+              (p:Project)
+              -[:BELONGS_TO]->
+              (c:Company)
+        RETURN
+            p.id AS id,
+            p.name AS name,
+            p.description AS description,
+            p.stars AS stars,
+            p.url AS url,
+            c.name AS company
+        ORDER BY p.stars DESC
+        `,
+        {developerId}
+    );
 }
