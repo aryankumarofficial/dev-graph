@@ -1,8 +1,15 @@
-import {GraphStats} from "@/types/dashboard.type";
 import {runQuery} from "@/lib/cognodb";
+import {GraphStats} from "@/types/dashboard.type";
+
 
 export async function getGraphStats(): Promise<GraphStats> {
-    const records = await runQuery<GraphStats>(`
+    const records = await runQuery<{
+        developers: number;
+        skills: number;
+        technologies: number;
+        projects: number;
+        companies: number;
+    }>(`
         MATCH (d:Developer)
         WITH count(d) AS developers
 
@@ -20,15 +27,26 @@ export async function getGraphStats(): Promise<GraphStats> {
             developers,
             skills,
             technologies,
-            projects,
             count(c) AS companies
     `);
 
-    return records[0] ?? {
-        developers: 0,
-        skills: 0,
-        technologies: 0,
-        projects: 0,
-        companies: 0,
+    const stats = records[0];
+
+    if (!stats) {
+        return {
+            developers: 0,
+            skills: 0,
+            technologies: 0,
+            projects: 0,
+            companies: 0,
+        };
+    }
+
+    return {
+        developers: Number(stats.developers),
+        skills: Number(stats.skills),
+        technologies: Number(stats.technologies),
+        projects: Number(stats.projects),
+        companies: Number(stats.companies),
     };
 }
