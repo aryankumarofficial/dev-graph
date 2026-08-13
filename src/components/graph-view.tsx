@@ -4,9 +4,15 @@ import {Background, Controls, type Edge, MiniMap, type Node, ReactFlow,} from "@
 
 import "@xyflow/react/dist/style.css";
 
+import {GraphNode} from "./graph-node";
+
 type GraphViewProps = {
     nodes: Node[];
     edges: Edge[];
+};
+
+const nodeTypes = {
+    graphNode: GraphNode,
 };
 
 export function GraphView({
@@ -18,19 +24,15 @@ export function GraphView({
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
+                nodeTypes={nodeTypes}
                 fitView
                 fitViewOptions={{
                     padding: 0.2,
                 }}
             >
                 <Background gap={16} size={1}/>
-
                 <Controls/>
-
-                <MiniMap
-                    pannable
-                    zoomable
-                />
+                <MiniMap/>
             </ReactFlow>
         </div>
     );

@@ -44,8 +44,9 @@ export function createGraphLayout(
             },
             data: {
                 label: node.label,
+                nodeType:node.type
             },
-            type: "default",
+            type: "graphNode",
         };
     });
 
