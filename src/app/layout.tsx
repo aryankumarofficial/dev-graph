@@ -4,6 +4,7 @@ import "./globals.css";
 import {cn} from "@/lib/utils";
 import {Navbar} from "@/components/navbar";
 import {Footer} from "@/components/footer";
+import {ThemeProvider} from "@/components/theme-provider";
 
 const instrumentSerifHeading = Instrument_Serif({subsets: ['latin'], weight: ['400'], variable: '--font-heading'});
 
@@ -87,15 +88,18 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: LayoutProps<"/">) {
     return (
         <html
+            suppressHydrationWarning
             lang="en"
             className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, instrumentSerifHeading.variable)}
         >
         <body className="min-h-full flex flex-col">
-        <Navbar/>
-        <main className={"flex-1"}>
-            {children}
-        </main>
-        <Footer/>
+        <ThemeProvider>
+            <Navbar/>
+            <main className={"flex-1"}>
+                {children}
+            </main>
+            <Footer/>
+        </ThemeProvider>
         </body>
         </html>
     );

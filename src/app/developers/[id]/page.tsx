@@ -64,8 +64,8 @@ export default async function ({params}: PageProps) {
     }
     return (
         <main className="container mx-auto max-w-6xl px-6 py-10">
-            <Button variant="ghost" className="mb-6 -ml-3">
-                <Link href="/developers">
+            <Button variant="ghost" className="mb-6 -ml-3 w-32 h-14">
+                <Link href="/developers" className={"flex items-center justify-center gap-1"}>
                     <ArrowLeft/>
                     Developers
                 </Link>
