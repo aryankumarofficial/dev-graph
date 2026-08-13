@@ -1,11 +1,12 @@
 "use client";
 import {useMemo, useState} from "react";
-import {Background, Controls, type Edge, MiniMap, type Node, ReactFlow,} from "@xyflow/react";
+import {Background, ColorMode, Controls, type Edge, MiniMap, type Node, ReactFlow,} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import {GraphNode} from "./graph-node";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
+import {useTheme} from "next-themes";
 
 type GraphViewProps = {
     nodes: Node[];
@@ -29,6 +30,7 @@ export function GraphView({
                               nodes,
                               edges,
                           }: GraphViewProps) {
+    const {resolvedTheme} = useTheme()
     const [enabledRelationships, setEnabledRelationships] = useState(new Set(relationshipTypes));
     const filteredEdges = useMemo(() => {
         return edges.filter(edge => {
@@ -132,10 +134,16 @@ export function GraphView({
                     fitViewOptions={{
                         padding: 0.2,
                     }}
+                    colorMode={resolvedTheme as ColorMode}
                 >
                     <Background gap={16} size={1}/>
-                    <Controls/>
-                    <MiniMap/>
+                    <Controls
+                        className="bg-background! border-border! text-foreground!"
+                    />
+
+                    <MiniMap
+                        className="bg-background! border-border!"
+                    />
                 </ReactFlow>
             </div>
         </div>
