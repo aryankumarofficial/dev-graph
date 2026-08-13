@@ -1,7 +1,7 @@
 import React from 'react'
-import {IDeveloper} from "@/types/developer.type";
 import {DeveloperCard} from "@/components/developer-card";
 import {Metadata} from "next";
+import {getDevelopers} from "@/lib/queries/developers";
 
 export const metadata: Metadata = {
     title: "Developers",
@@ -10,8 +10,7 @@ export const metadata: Metadata = {
 };
 
 async function DevelopersPage() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/developers`);
-    const developers = await response.json() as IDeveloper[];
+    const developers = await getDevelopers();
     return (
         <main className={"container mx-auto px-6 py-10"}>
             <div className={"mb-8"}>

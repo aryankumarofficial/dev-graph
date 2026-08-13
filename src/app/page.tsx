@@ -3,15 +3,14 @@ import {ArrowRight, Building2, Code2, FolderGit2, GitBranch, Layers3, Users,} fr
 import {StatCard} from "@/components/stat-card";
 import {DeveloperCard} from "@/components/developer-card";
 import {Button} from "@/components/ui/button";
-import {GraphStats} from "@/types/dashboard.type";
-import {IDeveloper} from "@/types/developer.type";
+import {getGraphStats} from "@/lib/queries/dashboard";
+import {getDevelopers} from "@/lib/queries/developers";
 
 export default async function HomePage() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/stats`);
-    const {stats, developers}: {
-        stats: GraphStats,
-        developers: IDeveloper[]
-    } = await res.json();
+    const [stats, developers] = await Promise.all([
+        getGraphStats(),
+        getDevelopers(),
+    ]);
 
     return (
         <main className="container mx-auto px-6 py-10">
