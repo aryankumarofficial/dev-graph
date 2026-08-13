@@ -14,40 +14,35 @@ export async function getDeveloperGraph(
         relationship: string;
     }>(
         `
-    MATCH (d:Developer {id: $developerId})
+        MATCH (d:Developer {id: $developerId})
 
-    MATCH path =
-        (d)-[
-            :HAS_SKILL|
-            BUILT|
-            RELATED_TO|
-            USES|
-            BELONGS_TO
-        *1..3]-(connected)
+        OPTIONAL MATCH (d)-[r1:HAS_SKILL]->(s:Skill)
+        OPTIONAL MATCH (d)-[r2:BUILT]->(p:Project)
+        OPTIONAL MATCH (s)-[r3:RELATED_TO]->(t:Technology)
+        OPTIONAL MATCH (p)-[r4:USES]->(t2:Technology)
+        OPTIONAL MATCH (p)-[r5:BELONGS_TO]->(c:Company)
 
-    WITH relationships(path) AS relationships
+        WITH [r1, r2, r3, r4, r5] AS relationships
 
-    UNWIND relationships AS rel
+        UNWIND relationships AS rel
 
-    WITH
-        startNode(rel) AS source,
-        endNode(rel) AS target,
-        type(rel) AS relationship
+        WITH rel
+        WHERE rel IS NOT NULL
 
-    RETURN DISTINCT
-        source.id AS sourceId,
-        source.name AS sourceName,
-        labels(source)[0] AS sourceType,
-        target.id AS targetId,
-        target.name AS targetName,
-        labels(target)[0] AS targetType,
-        relationship
-    `,
+        RETURN DISTINCT
+            startNode(rel).id AS sourceId,
+            startNode(rel).name AS sourceName,
+            labels(startNode(rel))[0] AS sourceType,
+            endNode(rel).id AS targetId,
+            endNode(rel).name AS targetName,
+            labels(endNode(rel))[0] AS targetType,
+            type(rel) AS relationship
+        `,
         {developerId}
     );
 
     const nodeMap = new Map<string, GraphNode>();
-    const edges: GraphEdge[] = [];
+    const edgeMap = new Map<string, GraphEdge>();
 
     for (const record of records) {
         nodeMap.set(record.sourceId, {
@@ -62,8 +57,10 @@ export async function getDeveloperGraph(
             type: record.targetType,
         });
 
-        edges.push({
-            id: `${record.sourceId}-${record.relationship}-${record.targetId}`,
+        const edgeId = `${record.sourceId}-${record.relationship}-${record.targetId}`;
+
+        edgeMap.set(edgeId, {
+            id: edgeId,
             source: record.sourceId,
             target: record.targetId,
             label: record.relationship,
@@ -72,6 +69,6 @@ export async function getDeveloperGraph(
 
     return {
         nodes: Array.from(nodeMap.values()),
-        edges,
+        edges: Array.from(edgeMap.values()),
     };
 }

@@ -2,6 +2,8 @@
 
 import {Background, Controls, type Edge, MiniMap, type Node, ReactFlow,} from "@xyflow/react";
 
+import "@xyflow/react/dist/style.css";
+
 type GraphViewProps = {
     nodes: Node[];
     edges: Edge[];
@@ -17,11 +19,18 @@ export function GraphView({
                 nodes={nodes}
                 edges={edges}
                 fitView
-                attributionPosition="bottom-left"
+                fitViewOptions={{
+                    padding: 0.2,
+                }}
             >
-                <Background/>
+                <Background gap={16} size={1}/>
+
                 <Controls/>
-                <MiniMap/>
+
+                <MiniMap
+                    pannable
+                    zoomable
+                />
             </ReactFlow>
         </div>
     );

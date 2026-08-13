@@ -1,6 +1,24 @@
 import type {Edge, Node} from "@xyflow/react";
 import {GraphEdge, GraphNode} from "@/types/graph.type";
 
+const columnConfig = {
+    Developer: {
+        x: 0,
+    },
+    Skill: {
+        x: 350,
+    },
+    Technology: {
+        x: 700,
+    },
+    Project: {
+        x: 1050,
+    },
+    Company: {
+        x: 1400,
+    },
+};
+
 export function createGraphLayout(
     graphNodes: GraphNode[],
     graphEdges: GraphEdge[]
@@ -8,23 +26,35 @@ export function createGraphLayout(
     nodes: Node[];
     edges: Edge[];
 } {
-    const nodes: Node[] = graphNodes.map((node, index) => ({
-        id: node.id,
-        position: {
-            x: (index % 4) * 260,
-            y: Math.floor(index / 4) * 150,
-        },
-        data: {
-            label: node.label,
-        },
-        type: "default",
-    }));
+    const counters: Record<string, number> = {};
+
+    const nodes: Node[] = graphNodes.map((node) => {
+        const index = counters[node.type] ?? 0;
+
+        counters[node.type] = index + 1;
+
+        const column =
+            columnConfig[node.type as keyof typeof columnConfig];
+
+        return {
+            id: node.id,
+            position: {
+                x: column?.x ?? 0,
+                y: index * 140,
+            },
+            data: {
+                label: node.label,
+            },
+            type: "default",
+        };
+    });
 
     const edges: Edge[] = graphEdges.map((edge) => ({
         id: edge.id,
         source: edge.source,
         target: edge.target,
         label: edge.label,
+        animated: false,
     }));
 
     return {
