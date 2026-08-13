@@ -1,6 +1,13 @@
 import React from 'react'
 import {IDeveloper} from "@/types/developer.type";
 import {DeveloperCard} from "@/components/developer-card";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "Developers",
+    description:
+        "Explore developers and discover their skills, technologies, projects, and company connections.",
+};
 
 async function DevelopersPage() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/developers`);

@@ -5,11 +5,54 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {DeveloperProject, DeveloperSkill, DeveloperTechnology} from "@/types/developer.type";
+import {Metadata} from "next";
+import {getDeveloperById} from "@/lib/queries/developers";
 
 interface PageProps {
     params: Promise<{
         id: string;
     }>
+}
+
+
+export async function generateMetadata({
+                                           params,
+                                       }: PageProps): Promise<Metadata> {
+    const { id } = await params;
+
+    const developer = await getDeveloperById(id);
+
+    if (!developer) {
+        return {
+            title: "Developer Not Found",
+            description: "The requested developer could not be found in DevGraph.",
+        };
+    }
+
+    return {
+        title: `${developer.name} — Developer Profile`,
+        description:
+            `${developer.name} (@${developer.username}) — explore their skills, technologies, projects, and company connections through the DevGraph knowledge graph.`,
+
+        alternates: {
+            canonical: `/developers/${developer.id}`,
+        },
+
+        openGraph: {
+            title: `${developer.name} — Developer Profile | DevGraph`,
+            description:
+                `Explore ${developer.name}'s skills, technologies, projects, and graph connections.`,
+            type: "profile",
+            url: `/developers/${developer.id}`,
+        },
+
+        twitter: {
+            card: "summary",
+            title: `${developer.name} — Developer Profile | DevGraph`,
+            description:
+                `Explore ${developer.name}'s skills, technologies, projects, and graph connections.`,
+        },
+    };
 }
 
 export default async function ({params}: PageProps) {
