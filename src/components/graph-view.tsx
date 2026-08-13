@@ -49,13 +49,55 @@ export function GraphView({
         })
     }
 
+    const visibleNodeIds = useMemo(() => {
+        const ids = new Set<string>();
+        for (const edge of filteredEdges) {
+            ids.add(edge.source);
+            ids.add(edge.target);
+        }
+        // Always keep the selected developer visible.
+        const developerNode = nodes.find(
+            node => node.data?.nodeType === "Developer",
+        );
+        if (developerNode) {
+            ids.add(developerNode.id)
+        }
+        return ids;
+    }, [filteredEdges, nodes])
+
+    const filteredNodes = useMemo(() => {
+        return nodes.filter((node) => visibleNodeIds.has(node.id));
+    }, [nodes, visibleNodeIds]);
+
+    const allEnabled =
+        enabledRelationships.size === relationshipTypes.length;
+
     return (
         <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border bg-background p-4">
                 <span className="text-sm font-medium">
                     Relationships
                 </span>
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="all-relationships"
+                        checked={allEnabled}
+                        onCheckedChange={(checked) => {
+                            setEnabledRelationships(
+                                checked
+                                    ? new Set(relationshipTypes)
+                                    : new Set()
+                            );
+                        }}
+                    />
 
+                    <Label
+                        htmlFor="all-relationships"
+                        className="cursor-pointer text-xs font-medium"
+                    >
+                        All
+                    </Label>
+                </div>
                 {relationshipTypes.map((relationship) => (
                     <div
                         key={relationship}
@@ -83,7 +125,7 @@ export function GraphView({
 
             <div className="h-180 w-full overflow-hidden rounded-xl border bg-muted/20">
                 <ReactFlow
-                    nodes={nodes}
+                    nodes={filteredNodes}
                     edges={filteredEdges}
                     nodeTypes={nodeTypes}
                     fitView
