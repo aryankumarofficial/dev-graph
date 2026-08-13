@@ -1,11 +1,13 @@
 import neo4j from "neo4j-driver";
+import {loadEnvConfig} from "@next/env"
 
+loadEnvConfig(process.cwd());
 const uri = process.env.COGNODB_URI;
 const username = process.env.COGNODB_USERNAME;
 const password = process.env.COGNODB_PASSWORD;
 
 if (!uri || !username || !password) {
-    console.log(uri,username,password);
+    console.log(uri, username, password);
     throw new Error("Missing required argument");
 }
 
