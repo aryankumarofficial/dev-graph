@@ -9,7 +9,7 @@ interface DeveloperCardProps {
 
 export function DeveloperCard({developer}: DeveloperCardProps) {
     return (
-        <Link href={`/developer/${developer.id}`}>
+        <Link href={`/developers/${developer.id}`}>
             <Card className={"h-full transition-colors hover:bg-muted/50"}>
                 <CardHeader>
                     <div className={"mb-3 flex size-10 items-center justify-center rounded-lg bg-primary/10"}>

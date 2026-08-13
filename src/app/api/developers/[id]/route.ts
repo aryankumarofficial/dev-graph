@@ -1,5 +1,10 @@
 import {NextRequest, NextResponse} from "next/server";
-import {getDeveloperById, getDeveloperSkills, getDeveloperTechnologies} from "@/lib/queries/developers";
+import {
+    getDeveloperById,
+    getDeveloperProjects,
+    getDeveloperSkills,
+    getDeveloperTechnologies
+} from "@/lib/queries/developers";
 
 export const GET = async (
     _req: NextRequest,
@@ -20,15 +25,16 @@ export const GET = async (
             )
         }
 
-        const [skills, technologies] = await Promise.all([
+        const [skills, technologies, projects] = await Promise.all([
             getDeveloperSkills(id),
-            getDeveloperTechnologies(id)
+            getDeveloperTechnologies(id),
+            getDeveloperProjects(id)
         ])
 
         return NextResponse.json({
             developer,
             skills,
-            technologies
+            technologies, projects
         });
 
     } catch (error) {
