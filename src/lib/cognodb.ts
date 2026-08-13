@@ -1,10 +1,11 @@
 import neo4j from "neo4j-driver";
 
-const uri = process.env["CONGODB_URI"];
-const username = process.env["CONGODB_USERNAME"];
-const password = process.env["CONGODB_PASSWORD"];
+const uri = process.env.COGNODB_URI;
+const username = process.env.COGNODB_USERNAME;
+const password = process.env.COGNODB_PASSWORD;
 
 if (!uri || !username || !password) {
+    console.log(uri,username,password);
     throw new Error("Missing required argument");
 }
 
